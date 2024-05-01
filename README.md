@@ -1,1 +1,1 @@
-# root-hub-install-script
+# rh-install-script
