@@ -11,30 +11,39 @@ apt autoremove -y
 echo "Cleaning up old journalctl logs"
 journalctl --flush --rotate --vacuum-time=1s
 
-
+echo "Prepare for Network Manager"
 mv /etc/network/interfaces /etc/network/interfaces_bak
 
 echo "Installing HA packages"
-apt install apparmor cifs-utils curl dbus jq libglib2.0-bin lsb-release network-manager nfs-common systemd-journal-remote systemd-resolved udisks2 wget vim net-tools fail2ban ufw sudo -y
+apt install apparmor cifs-utils curl dbus jq libglib2.0-bin lsb-release network-manager nfs-common systemd-journal-remote systemd-resolved udisks2 wget vim net-tools fail2ban ufw sudo vim -y
 
+echo "Configure Network Manager"
 nmcli connection modify eth0 connection.autoconnect yes
 nmcli con mod eth0 ipv4.dns "8.8.8.8 8.8.4.4"
-
-echo "Restart Network Manager"
 systemctl restart NetworkManager
 
 sleep 2
 
+echo "Configure FireWall"
+ufw allow ssh
+ufw allow 8123
+ufw allow in on hassio to any
+yes | ufw enable
+
 echo "Install docker"
 curl -fsSL get.docker.com | sh
 
-wget https://github.com/home-assistant/os-agent/releases/download/1.6.0/os-agent_1.6.0_linux_x86_64.deb
+echo "Configure FireWall for docker"
+wget -O /usr/local/bin/ufw-docker https://github.com/chaifeng/ufw-docker/raw/master/ufw-docker
+chmod +x /usr/local/bin/ufw-docker
+ufw-docker install
+ufw reload
 
 echo "Install OS Agent"
+wget https://github.com/home-assistant/os-agent/releases/download/1.6.0/os-agent_1.6.0_linux_x86_64.deb
 sudo dpkg -i os-agent_1.6.0_linux_x86_64.deb
 
-sudo wget -O homeassistant-supervised.deb https://github.com/home-assistant/supervised-installer/releases/latest/download/homeassistant-supervised.deb
-
 echo "Install HA"
+sudo wget -O homeassistant-supervised.deb https://github.com/home-assistant/supervised-installer/releases/latest/download/homeassistant-supervised.deb
 apt install ./homeassistant-supervised.deb
 
