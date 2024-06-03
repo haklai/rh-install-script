@@ -43,6 +43,14 @@ echo "Install OS Agent"
 wget https://github.com/home-assistant/os-agent/releases/download/1.6.0/os-agent_1.6.0_linux_x86_64.deb
 sudo dpkg -i os-agent_1.6.0_linux_x86_64.deb
 
+echo "Prepare one time script"
+wget https://raw.githubusercontent.com/haklai/rh-install-script/main/one_time_script.service
+wget https://raw.githubusercontent.com/haklai/rh-install-script/main/one_time_script.sh
+mv one_time_script.service /etc/systemd/system/
+mv one_time_script.sh /usr/local/bin/one_time_script.sh
+chmod +x /usr/local/bin/one_time_script.sh
+systemctl enable one_time_script.service
+
 echo "Install HA"
 sudo wget -O homeassistant-supervised.deb https://github.com/home-assistant/supervised-installer/releases/latest/download/homeassistant-supervised.deb
 apt install ./homeassistant-supervised.deb

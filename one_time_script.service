@@ -1,0 +1,12 @@
+[Unit]
+Description=Run a one-time script after reboot
+After=network.target multi-user.target hassio-supervisor.service
+Wants=network-online.target hassio-apparmor.service time-sync.target systemd-journal-gatewayd.socket systemd-resolved.service hassio-supervisor.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/one_time_script.sh
+
+[Install]
+WantedBy=multi-user.target
+
