@@ -4,7 +4,7 @@
 echo "This script runs once after a reboot."
 # Add your actual script logic here
 
-sleep 10
+sleep 60
 
 ha addons install a0d7b954_tailscale
 

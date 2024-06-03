@@ -53,8 +53,5 @@ systemctl enable one_time_script.service
 
 echo "Install HA"
 sudo wget -O homeassistant-supervised.deb https://github.com/home-assistant/supervised-installer/releases/latest/download/homeassistant-supervised.deb
-apt install ./homeassistant-supervised.deb
+apt install ./homeassistant-supervised.deb && sleep 10 && reboot
 
-sleep 2
-
-reboot
