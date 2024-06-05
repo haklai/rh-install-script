@@ -25,6 +25,11 @@ systemctl restart NetworkManager
 sleep 2
 
 echo "Configure FireWall"
+wget -O /usr/local/bin/ufw-docker https://github.com/chaifeng/ufw-docker/raw/master/ufw-docker
+chmod +x /usr/local/bin/ufw-docker
+ufw-docker install
+systemctl restart ufw
+
 ufw allow ssh
 ufw allow 8123
 ufw allow in on hassio to any
