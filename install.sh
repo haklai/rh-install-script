@@ -11,6 +11,15 @@ apt autoremove -y
 echo "Cleaning up old journalctl logs"
 journalctl --flush --rotate --vacuum-time=1s
 
+# Create SWAP
+fallocate -l 1G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+echo '/swapfile none swap sw 0 0' | tee -a /etc/fstab
+sysctl vm.swappiness=50
+
+# Prepare Network
 echo "Prepare for Network Manager"
 mv /etc/network/interfaces /etc/network/interfaces_bak
 
@@ -24,6 +33,7 @@ systemctl restart NetworkManager
 
 sleep 2
 
+# Setup Firewall
 echo "Configure FireWall"
 wget -O /usr/local/bin/ufw-docker https://github.com/chaifeng/ufw-docker/raw/master/ufw-docker
 chmod +x /usr/local/bin/ufw-docker
@@ -35,6 +45,7 @@ ufw allow 8123
 ufw allow in on hassio to any
 yes | ufw enable
 
+# Install Home Assistant Supervised
 echo "Install docker"
 curl -fsSL get.docker.com | sh
 
